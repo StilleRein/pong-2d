@@ -5,15 +5,13 @@ using UnityEngine;
 public class Player2Controller : MonoBehaviour
 {
     public float speed, topLine, botLine;
-    public string axis;
-    public string isPVP;
+    public string axis, isPVP;
     Transform pongBall;
 
     // Start is called before the first frame update
     void Start()
     {
         isPVP = PlayerPrefs.GetString("isPVP");
-
         pongBall = GameObject.Find("PongBall").transform;
     }
 
@@ -34,9 +32,7 @@ public class Player2Controller : MonoBehaviour
         float nextPos = transform.position.y + move;
 
         if (nextPos > topLine || nextPos < botLine)
-        {
             move = 0;
-        }
 
         transform.Translate(0, move, 0);
     }

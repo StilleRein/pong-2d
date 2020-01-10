@@ -7,21 +7,24 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    public bool isEscapeToExit;
-    GameObject stagePanel, startBtn, helpPanel;
+    GameObject mainPanel, typePanel, localPanel, multiplayerPanel, titleText, backBtn, helpPanel, exitConfirmationPanel;
+    int currentMenu = 0;
     AudioSource audio;
     public AudioClip hitButtonSound;
 
     // Start is called before the first frame update
     void Start()
     {
-        startBtn = GameObject.Find("StartBtn");
-
-        stagePanel = GameObject.Find("StagePanel");
-        stagePanel.SetActive(false);
-
+        mainPanel = GameObject.Find("MainPanel");
+        typePanel = GameObject.Find("TypePanel");
+        localPanel = GameObject.Find("LocalPanel");
+        multiplayerPanel = GameObject.Find("MultiplayerPanel");
+        titleText = GameObject.Find("TitleText");
+        backBtn = GameObject.Find("BackBtn");
         helpPanel = GameObject.Find("HelpPanel");
-        helpPanel.SetActive(false);
+        exitConfirmationPanel = GameObject.Find("ExitConfirmationPanel");
+
+        init();
 
         audio = GetComponent<AudioSource>();
     }
@@ -29,54 +32,131 @@ public class SceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Escape))
+    }
+
+    public void init(){
+        typePanel.SetActive(false);
+        localPanel.SetActive(false);
+        multiplayerPanel.SetActive(false);
+        backBtn.SetActive(false);
+        helpPanel.SetActive(false);
+        exitConfirmationPanel.SetActive(false);
+    }
+
+    public void ClickButtonAudio(){
+        audio.PlayOneShot(hitButtonSound);
+    }
+
+    public void MainPanel(Button button){
+        ClickButtonAudio();
+
+        if(button.name.Equals("StartBtn"))
         {
-            if (isEscapeToExit)
-                Application.Quit();
-
-            else
-                BackToMenu();
+            currentMenu = 1;
+            typePanel.SetActive(true);
+            backBtn.SetActive(true);
+            mainPanel.SetActive(false);
         }
+
+        else if(button.name.Equals("ExitBtn"))
+            exitConfirmationPanel.SetActive(true);
     }
 
-    public void StartGame()
-    {
-        audio.PlayOneShot(hitButtonSound);
-        startBtn.SetActive(false);
-        stagePanel.SetActive(true);  
+    public void SelectGameType(Button button){
+        ClickButtonAudio();
+        typePanel.SetActive(false);
+        titleText.SetActive(false);
+
+        if (button.name.Equals("LocalBtn"))
+        {
+            currentMenu = 2;
+            localPanel.SetActive(true);
+        }
+
+        else if(button.name.Equals("MultiplayerBtn"))
+        {
+            currentMenu = 3;
+            multiplayerPanel.SetActive(true);
+        }
+
     }
 
-    public void PVPBtnClicked()
-    {
-        audio.PlayOneShot(hitButtonSound);
-        PlayerPrefs.SetString("player1Name", "Player1");
-        PlayerPrefs.SetString("player2Name", "Player2");
-        PlayerPrefs.SetString("isPVP", "true");
+    public void SelectLocal(Button button){
+        ClickButtonAudio();
+
+        if(button.name.Equals("PvpBtn"))
+        {
+            PlayerPrefs.SetString("player1Name", "Player1");
+            PlayerPrefs.SetString("player2Name", "Player2");
+            PlayerPrefs.SetString("isPVP", "true");
+        }
+
+        else if(button.name.Equals("CpuBtn"))
+        {
+            PlayerPrefs.SetString("player1Name", "You");
+            PlayerPrefs.SetString("player2Name", "CPU");
+            PlayerPrefs.SetString("isPVP", "false");
+        }
+
         SceneManager.LoadScene("Main");
     }
 
-    public void CPUBtnClicked()
-    {
-        audio.PlayOneShot(hitButtonSound);
-        PlayerPrefs.SetString("player1Name", "You");
-        PlayerPrefs.SetString("player2Name", "CPU");
-        PlayerPrefs.SetString("isPVP", "false");
-        SceneManager.LoadScene("Main");
+    public void SelectMultiplayer(Button button){
+        ClickButtonAudio();
+
+        if(button.name.Equals("HostBtn"))
+        {
+            Debug.Log("Host");
+        }
+
+        else if(button.name.Equals("JoinBtn"))
+        {
+            Debug.Log("Join");
+        }
+
+        // SceneManager.LoadScene("Main");
     }
 
-    public void BackToMenu()
-    {
-       SceneManager.LoadScene("Menu");
+    public void BackBtnClicked(){
+        if(currentMenu == 1){
+            mainPanel.SetActive(true);
+            typePanel.SetActive(false);
+            backBtn.SetActive(false);
+            currentMenu = 0;
+        }
+
+        if(currentMenu == 2){
+            localPanel.SetActive(false);
+            titleText.SetActive(true);
+            typePanel.SetActive(true);
+            currentMenu = 1;
+        }
+
+        if(currentMenu == 3){
+            multiplayerPanel.SetActive(false);
+            titleText.SetActive(true);
+            typePanel.SetActive(true);
+            currentMenu = 2;
+        }
     }
 
     public void Help()
     {
-        audio.PlayOneShot(hitButtonSound);
+        ClickButtonAudio();
         helpPanel.SetActive(true);
     }
 
     public void CloseHelp()
     {
+        ClickButtonAudio();
         helpPanel.SetActive(false);
+    }
+
+    public void ExitConfirmation(Button button){
+        if (button.name.Equals("YesBtn"))
+            Application.Quit();
+
+        else if(button.name.Equals("NoBtn"))
+            exitConfirmationPanel.SetActive(false);
     }
 }

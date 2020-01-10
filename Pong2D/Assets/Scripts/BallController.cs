@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class BallController : MonoBehaviour
 {
@@ -59,7 +60,7 @@ public class BallController : MonoBehaviour
         {
             audio.PlayOneShot(hitGoalSound);
             StartCoroutine("BallDelay");
-            
+
             if (coll.gameObject.name == "RightSide")
             {
                 scoreP2++;
@@ -102,8 +103,9 @@ public class BallController : MonoBehaviour
                 else
                     winnerTxt.text = "You Win!";
             }
-                
-            else{
+
+            else
+            {
                 if (isPVP == "true")
                     winnerTxt.text = "Player 2 Win!";
 
@@ -112,6 +114,9 @@ public class BallController : MonoBehaviour
             }
 
             direction = new Vector2(0, 0).normalized;
+
+
+            SceneManager.LoadScene("EndGame");
             return;
         }
     }

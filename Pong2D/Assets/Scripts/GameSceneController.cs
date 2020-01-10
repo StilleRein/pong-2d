@@ -7,8 +7,6 @@ using UnityEngine.SceneManagement;
 public class GameSceneController : MonoBehaviour
 {
     Text player1Txt, player2Txt, countdownTxt;
-    AudioSource audio;
-    public AudioClip hitButtonSound;
     GameObject countdownPanel;
     public static bool starting;
 
@@ -22,8 +20,6 @@ public class GameSceneController : MonoBehaviour
         player1Txt.text = PlayerPrefs.GetString("player1Name");
         player2Txt.text = PlayerPrefs.GetString("player2Name");
 
-        audio = GetComponent<AudioSource>();
-
         countdownPanel = GameObject.Find("CountdownPanel");
 
         StartCoroutine(GameCountdown(3));
@@ -32,23 +28,10 @@ public class GameSceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    public void ReplayGame()
-    {
-        audio.PlayOneShot(hitButtonSound);
-        SceneManager.LoadScene("Main");
-    }
-
-    public void BackToMenu()
-    {
-        audio.PlayOneShot(hitButtonSound);
-        SceneManager.LoadScene("Menu");
     }
 
     IEnumerator GameCountdown(int seconds)
-    { 
+    {
         int time = seconds;
 
         //display 3, 2, 1 count down
