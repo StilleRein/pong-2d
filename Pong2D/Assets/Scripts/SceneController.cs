@@ -8,9 +8,10 @@ using UnityEngine.SceneManagement;
 public class SceneController : MonoBehaviour
 {
     GameObject mainPanel, typePanel, localPanel, multiplayerPanel, titleText, backBtn, helpPanel, exitConfirmationPanel;
-    int currentMenu = 0;
+    public static int currentMenu = 0;
     AudioSource audio;
     public AudioClip hitButtonSound;
+    public static bool isLocal = false;
 
     // Start is called before the first frame update
     void Start()
@@ -75,7 +76,7 @@ public class SceneController : MonoBehaviour
 
         else if(button.name.Equals("MultiplayerBtn"))
         {
-            currentMenu = 3;
+            backBtn.SetActive(false);
             multiplayerPanel.SetActive(true);
         }
 
@@ -98,23 +99,8 @@ public class SceneController : MonoBehaviour
             PlayerPrefs.SetString("isPVP", "false");
         }
 
+        isLocal = true;
         SceneManager.LoadScene("Main");
-    }
-
-    public void SelectMultiplayer(Button button){
-        ClickButtonAudio();
-
-        if(button.name.Equals("HostBtn"))
-        {
-            Debug.Log("Host");
-        }
-
-        else if(button.name.Equals("JoinBtn"))
-        {
-            Debug.Log("Join");
-        }
-
-        // SceneManager.LoadScene("Main");
     }
 
     public void BackBtnClicked(){
@@ -130,13 +116,6 @@ public class SceneController : MonoBehaviour
             titleText.SetActive(true);
             typePanel.SetActive(true);
             currentMenu = 1;
-        }
-
-        if(currentMenu == 3){
-            multiplayerPanel.SetActive(false);
-            titleText.SetActive(true);
-            typePanel.SetActive(true);
-            currentMenu = 2;
         }
     }
 

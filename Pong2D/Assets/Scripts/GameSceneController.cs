@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameSceneController : MonoBehaviour
 {
     Text player1Txt, player2Txt, countdownTxt;
-    GameObject countdownPanel;
+    GameObject countdownPanel, players, pongBall;
     public static bool starting;
 
     // Start is called before the first frame update
@@ -21,6 +21,15 @@ public class GameSceneController : MonoBehaviour
         player2Txt.text = PlayerPrefs.GetString("player2Name");
 
         countdownPanel = GameObject.Find("CountdownPanel");
+
+        players = GameObject.Find("Players");
+        pongBall = GameObject.Find("PongBall");
+
+        if(!SceneController.isLocal)
+        {
+            players.SetActive(false);
+            pongBall.SetActive(false);
+        }
 
         StartCoroutine(GameCountdown(3));
     }
