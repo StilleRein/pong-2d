@@ -59,7 +59,7 @@ public class SceneController : MonoBehaviour
             mainPanel.SetActive(false);
         }
 
-        else if(button.name.Equals("ExitBtn"))
+        if(button.name.Equals("ExitBtn"))
             exitConfirmationPanel.SetActive(true);
     }
 
@@ -72,12 +72,14 @@ public class SceneController : MonoBehaviour
         {
             currentMenu = 2;
             localPanel.SetActive(true);
+            isLocal = true;
         }
 
-        else if(button.name.Equals("MultiplayerBtn"))
+        if(button.name.Equals("MultiplayerBtn"))
         {
             backBtn.SetActive(false);
             multiplayerPanel.SetActive(true);
+            isLocal = false;
         }
 
     }
@@ -92,14 +94,13 @@ public class SceneController : MonoBehaviour
             PlayerPrefs.SetString("isPVP", "true");
         }
 
-        else if(button.name.Equals("CpuBtn"))
+        if(button.name.Equals("CpuBtn"))
         {
             PlayerPrefs.SetString("player1Name", "You");
             PlayerPrefs.SetString("player2Name", "CPU");
             PlayerPrefs.SetString("isPVP", "false");
         }
 
-        isLocal = true;
         SceneManager.LoadScene("Main");
     }
 

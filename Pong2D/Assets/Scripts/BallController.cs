@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 
-public class BallController : MonoBehaviour
+public class BallController : NetworkBehaviour
 {
-    public int force, scoreP1, scoreP2;
-    Text scoreTxtP1, scoreTxtP2, winnerTxt;
-    GameObject endPanel;
+    public int force;
+    [SyncVar (hook = "OnChangeScore1")]
+    public int scoreP1;
+    [SyncVar (hook = "OnChangeScore2")]
+    public int scoreP2;
+    Text winnerTxt;
     AudioSource audio;
     public AudioClip hitPlayerSound, hitSidesSound, hitGoalSound;
     public string isPVP;
@@ -16,6 +20,7 @@ public class BallController : MonoBehaviour
     public static int forceStatic;
     public static Rigidbody2D rigid;
     public static Vector2 direction;
+    public static bool isEndGame = false;
 
     // Start is called before the first frame update
     void Start()
@@ -26,11 +31,6 @@ public class BallController : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
 
         scoreP1 = scoreP2 = 0;
-        scoreTxtP1 = GameObject.Find("Score1").GetComponent<Text>();
-        scoreTxtP2 = GameObject.Find("Score2").GetComponent<Text>();
-
-        endPanel = GameObject.Find("EndGamePanel");
-        endPanel.SetActive(false);
 
         audio = GetComponent<AudioSource>();
 
@@ -56,6 +56,9 @@ public class BallController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D coll)
     {
+        // if (!isServer)
+        //      return;
+
         if(coll.gameObject.name == "RightSide" || coll.gameObject.name == "LeftSide")
         {
             audio.PlayOneShot(hitGoalSound);
@@ -75,7 +78,7 @@ public class BallController : MonoBehaviour
             ResetBall();
         }
 
-        if (coll.gameObject.name == "Player1" || coll.gameObject.name == "Player2")
+        if (coll.gameObject.tag == "Player1" || coll.gameObject.tag == "Player2")
         {
             float angle = (transform.position.y - coll.transform.position.y) * 5f;
             direction = new Vector2(rigid.velocity.x, angle).normalized;
@@ -88,11 +91,12 @@ public class BallController : MonoBehaviour
         if(coll.gameObject.name == "TopSide" || coll.gameObject.name == "BotSide")
             audio.PlayOneShot(hitSidesSound);
 
-        updateScore();
+        if(SceneController.isLocal)
+            updateScore();
 
         if(scoreP1 == 5 || scoreP2 == 5)
         {
-            endPanel.SetActive(true);
+            GameSceneController.endPanel.SetActive(true);
             winnerTxt = GameObject.Find("WinnerText").GetComponent<Text>();
 
             if (scoreP1 == 5)
@@ -114,8 +118,6 @@ public class BallController : MonoBehaviour
             }
 
             direction = new Vector2(0, 0).normalized;
-
-
             SceneManager.LoadScene("EndGame");
             return;
         }
@@ -129,8 +131,19 @@ public class BallController : MonoBehaviour
 
     void updateScore()
     {
-        scoreTxtP1.text = scoreP1 + "";
-        scoreTxtP2.text = scoreP2 + "";
+        GameSceneController.scoreTxtP1.text = scoreP1 + "";
+        GameSceneController.scoreTxtP2.text = scoreP2 + "";
+    }
+
+    void OnChangeScore1(int score)
+    {
+        if (GameSceneController.scoreTxtP1 != null)
+            GameSceneController.scoreTxtP1.GetComponent<Text>().text = "" + score;
+    }
+    void OnChangeScore2(int score)
+    {
+        if (GameSceneController.scoreTxtP2 != null)
+            GameSceneController.scoreTxtP2.GetComponent<Text>().text = "" + score;
     }
 
     //Delay re launching the ball after hitting the goal

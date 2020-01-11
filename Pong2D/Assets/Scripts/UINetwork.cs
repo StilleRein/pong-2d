@@ -7,11 +7,13 @@ using UnityEngine.Networking;
 
 public class UINetwork : MonoBehaviour
 {
-    GameObject infoPanel, typePanel, multiplayerPanel, titleText, mainPanel, backBtn;
+    GameObject infoPanel, typePanel, multiplayerPanel, titleText, mainPanel, backBtn, namePanel;
     AudioSource audio;
     public AudioClip hitButtonSound;
     Button hostBtn, joinBtn, cancelBtn, backMultiplayerBtn;
     Text infoTxt;
+    public static string username;
+    InputField name;
     NetworkManager network;
     int status = 0;
 
@@ -19,17 +21,17 @@ public class UINetwork : MonoBehaviour
     void Start()
     {
         audio = GetComponent<AudioSource>();
-        soundManager = GameObject.Find("SoundManager");
 
         typePanel = GameObject.Find("TypePanel");
         multiplayerPanel = GameObject.Find("MultiplayerPanel");
         titleText = GameObject.Find("TitleText");
         mainPanel = GameObject.Find("MainPanel");
         backBtn = GameObject.Find("BackBtn");
-
+        namePanel = GameObject.Find("NamePanel");
         infoPanel = GameObject.Find("InfoPanel");
-        infoTxt = GameObject.Find("InfoText").GetComponent<Text>();
 
+        name = GameObject.Find("InputNameField").GetComponent<InputField>();
+        infoTxt = GameObject.Find("InfoText").GetComponent<Text>();
         hostBtn = GameObject.Find("HostBtn").GetComponent<Button>();
         joinBtn = GameObject.Find("JoinBtn").GetComponent<Button>();
         backMultiplayerBtn = GameObject.Find("BackMultiplayerBtn").GetComponent<Button>();
@@ -130,5 +132,11 @@ public class UINetwork : MonoBehaviour
         backBtn.SetActive(true);
         titleText.SetActive(true);
         typePanel.SetActive(true);
+    }
+
+    public void InputNameGo(){
+        username = name.text;
+        Debug.Log("username: " + username);
+        namePanel.SetActive(false);
     }
 }
