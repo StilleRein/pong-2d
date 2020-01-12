@@ -7,14 +7,14 @@ using UnityEngine.Networking;
 
 public class UINetwork : MonoBehaviour
 {
-    GameObject infoPanel, typePanel, multiplayerPanel, titleText, mainPanel, backBtn, namePanel;
+    GameObject infoPanel, typePanel, multiplayerPanel, titleText, mainPanel, backBtn, soundManager;
     AudioSource audio;
     public AudioClip hitButtonSound;
     Button hostBtn, joinBtn, cancelBtn, backMultiplayerBtn;
     Text infoTxt;
     public static string username;
-    InputField name;
-    NetworkManager network;
+    public static NetworkManager network;
+    public static bool isInGame = false;
     int status = 0;
 
     // Start is called before the first frame update
@@ -27,10 +27,8 @@ public class UINetwork : MonoBehaviour
         titleText = GameObject.Find("TitleText");
         mainPanel = GameObject.Find("MainPanel");
         backBtn = GameObject.Find("BackBtn");
-        namePanel = GameObject.Find("NamePanel");
         infoPanel = GameObject.Find("InfoPanel");
 
-        name = GameObject.Find("InputNameField").GetComponent<InputField>();
         infoTxt = GameObject.Find("InfoText").GetComponent<Text>();
         hostBtn = GameObject.Find("HostBtn").GetComponent<Button>();
         joinBtn = GameObject.Find("JoinBtn").GetComponent<Button>();
@@ -84,6 +82,9 @@ public class UINetwork : MonoBehaviour
 
     public void StartGame(){
         SceneController.isLocal = false;
+        PlayerPrefs.SetString("player1Name", "Player1");
+        PlayerPrefs.SetString("player2Name", "Player2");
+        isInGame = true;
         SceneManager.LoadScene ("Main");
     }
 
@@ -121,7 +122,14 @@ public class UINetwork : MonoBehaviour
 
     private void ConnectionError(NetworkMessage netMsg)
     {
-        network.StopHost ();
+        network.StopHost();
+        network.StopClient();
+
+        if(isInGame)
+        {
+            soundManager = GameObject.Find("SoundManager");
+            Destroy(soundManager);
+        }
         SceneManager.LoadScene ("Menu");
     }
 
@@ -132,11 +140,5 @@ public class UINetwork : MonoBehaviour
         backBtn.SetActive(true);
         titleText.SetActive(true);
         typePanel.SetActive(true);
-    }
-
-    public void InputNameGo(){
-        username = name.text;
-        Debug.Log("username: " + username);
-        namePanel.SetActive(false);
     }
 }

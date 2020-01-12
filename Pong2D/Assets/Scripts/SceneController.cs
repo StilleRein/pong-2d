@@ -25,6 +25,9 @@ public class SceneController : MonoBehaviour
         helpPanel = GameObject.Find("HelpPanel");
         exitConfirmationPanel = GameObject.Find("ExitConfirmationPanel");
 
+        UINetwork.isInGame = false;
+        BallManager.isBallSpawn = false;
+
         init();
 
         audio = GetComponent<AudioSource>();

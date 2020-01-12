@@ -32,15 +32,13 @@ public class PaddleController : NetworkBehaviour
     {
         if (transform.position.x > 0)
         {
-             PlayerPrefs.SetString("player1Name", "Player1");
-             gameObject.tag = "Player1";
+             gameObject.tag = "Player";
              transform.GetComponent<SpriteRenderer>().color = new Color(0f, 0.6509804f, 0.8509804f);
         }
 
         else
         {
-            PlayerPrefs.SetString("player2Name","Player 2");
-            gameObject.tag = "Player2";
+            gameObject.tag = "Player";
             transform.GetComponent<SpriteRenderer>().color = new Color(0.9607843f, 0.4862745f, 0.509804f);
         }
     }

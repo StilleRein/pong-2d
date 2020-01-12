@@ -21,6 +21,7 @@ public class BallController : NetworkBehaviour
     public static Rigidbody2D rigid;
     public static Vector2 direction;
     public static bool isEndGame = false;
+    GameObject soundManager;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +46,11 @@ public class BallController : NetworkBehaviour
             rigid.AddForce(direction * force);
             doneCounting = false;
         }
+
+        if (GameObject.FindGameObjectsWithTag ("Player").Length == 1)
+        {
+            ClientDisconnect ();
+        }
     }
 
     //Move the ball after countdown
@@ -56,9 +62,6 @@ public class BallController : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D coll)
     {
-        // if (!isServer)
-        //      return;
-
         if(coll.gameObject.name == "RightSide" || coll.gameObject.name == "LeftSide")
         {
             audio.PlayOneShot(hitGoalSound);
@@ -78,7 +81,7 @@ public class BallController : NetworkBehaviour
             ResetBall();
         }
 
-        if (coll.gameObject.tag == "Player1" || coll.gameObject.tag == "Player2")
+        if (coll.gameObject.tag == "Player")
         {
             float angle = (transform.position.y - coll.transform.position.y) * 5f;
             direction = new Vector2(rigid.velocity.x, angle).normalized;
@@ -96,31 +99,68 @@ public class BallController : NetworkBehaviour
 
         if(scoreP1 == 5 || scoreP2 == 5)
         {
-            GameSceneController.endPanel.SetActive(true);
-            winnerTxt = GameObject.Find("WinnerText").GetComponent<Text>();
+            if(SceneController.isLocal){
+                GameSceneController.endPanel.SetActive(true);
+                winnerTxt = GameObject.Find("WinnerText").GetComponent<Text>();
 
-            if (scoreP1 == 5)
-            {
-                if(isPVP == "true")
-                    winnerTxt.text = "Player 1 Win!";
+                if (scoreP1 == 5)
+                {
+                    if(isPVP == "true")
+                        winnerTxt.text = "Player 1 Win!";
+
+                    else
+                        winnerTxt.text = "You Win!";
+                }
 
                 else
-                    winnerTxt.text = "You Win!";
+                {
+                    if (isPVP == "true")
+                        winnerTxt.text = "Player 2 Win!";
+
+                    else
+                        winnerTxt.text = "You Lose!";
+                }
             }
 
-            else
-            {
-                if (isPVP == "true")
-                    winnerTxt.text = "Player 2 Win!";
+            else {
+                if (scoreP1 == 5)
+                {
+                    RpcEndGame(1);
+                }
 
                 else
-                    winnerTxt.text = "You Lose!";
+                {
+                    RpcEndGame(2);
+                }
             }
 
             direction = new Vector2(0, 0).normalized;
             SceneManager.LoadScene("EndGame");
             return;
         }
+    }
+
+    void ClientDisconnect ()
+    {
+        UINetwork.network.StopHost();
+
+        if(UINetwork.isInGame)
+        {
+            soundManager = GameObject.Find("SoundManager");
+            Destroy(soundManager);
+        }
+
+        SceneManager.LoadScene("Menu");
+    }
+
+    [ClientRpc]
+    void RpcEndGame(int number)
+    {
+        GameSceneController.endPanel.SetActive(true);
+        winnerTxt = GameObject.Find("WinnerText").GetComponent<Text>();
+        winnerTxt.text = "Player " + number + " Win!";
+        direction = new Vector2(0, 0).normalized;
+        SceneManager.LoadScene("EndGame");
     }
 
     void ResetBall()

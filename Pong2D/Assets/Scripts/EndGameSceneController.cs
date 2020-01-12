@@ -8,29 +8,38 @@ public class EndGameSceneController : MonoBehaviour
 {
     AudioSource audio;
     public AudioClip hitButtonSound;
-    GameObject soundManager, ball;
+    GameObject soundManager, replayBtn;
 
     // Start is called before the first frame update
     void Start()
     {
         soundManager = GameObject.Find("SoundManager");
-        ball = GameObject.FindWithTag("Ball");
+        replayBtn = GameObject.Find("ReplayBtn");
         audio = GetComponent<AudioSource>();
+
+        if(!SceneController.isLocal)
+        {
+            replayBtn.SetActive(false);
+        }
     }
 
-     public void ReplayGame()
+    public void ReplayGame()
     {
         audio.PlayOneShot(hitButtonSound);
-        Destroy(ball);
         Destroy(soundManager);
-        BallManager.isBallSpawn = false;
         SceneManager.LoadScene("Main");
     }
 
     public void BackToMenu()
     {
         audio.PlayOneShot(hitButtonSound);
-        Destroy(ball);
+
+        if(!SceneController.isLocal)
+        {
+            UINetwork.network.StopHost();
+            UINetwork.network.StopClient();
+        }
+
         Destroy(soundManager);
         SceneManager.LoadScene("Menu");
     }
