@@ -7,11 +7,6 @@ public class Player1Controller : MonoBehaviour
     public float speed, topLine, botLine;
     public string axis;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
     // Update is called once per frame
     void Update()
     {

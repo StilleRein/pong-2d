@@ -9,11 +9,6 @@ public class BallManager : NetworkBehaviour
     public static bool isBallSpawn = false;
     GameObject ball;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
     // Update is called once per frame
     void Update()
     {

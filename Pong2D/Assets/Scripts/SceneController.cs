@@ -33,11 +33,6 @@ public class SceneController : MonoBehaviour
         audio = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     public void init(){
         typePanel.SetActive(false);
         localPanel.SetActive(false);
@@ -84,7 +79,6 @@ public class SceneController : MonoBehaviour
             multiplayerPanel.SetActive(true);
             isLocal = false;
         }
-
     }
 
     public void SelectLocal(Button button){
@@ -127,6 +121,12 @@ public class SceneController : MonoBehaviour
     {
         ClickButtonAudio();
         helpPanel.SetActive(true);
+    }
+
+    public void GoToCredits()
+    {
+        ClickButtonAudio();
+        SceneManager.LoadScene("Credit");
     }
 
     public void CloseHelp()

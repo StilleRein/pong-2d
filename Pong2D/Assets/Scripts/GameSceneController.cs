@@ -44,11 +44,6 @@ public class GameSceneController : MonoBehaviour
         StartCoroutine(GameCountdown(3));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     IEnumerator GameCountdown(int seconds)
     {
         int time = seconds;
